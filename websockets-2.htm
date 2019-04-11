@@ -21,6 +21,9 @@
 			out_msg=out_msg+"Message received Topic "+msg.destinationName;
 			console.log(out_msg);
 			document.getElementById("mqtt_message").innerHTML = msg.payloadString;
+			document.getElementById("message_topic").innerHTML = msg.destinationName;
+			
+			
 
 		}
 		
@@ -50,8 +53,9 @@
 	  </script>
    </head>
      <body>
-   <h1>Main Body</h1>
+   <h1>MQTT TEST - SCIENTS IoT</h1>
    <p>Message received: <b id = 'mqtt_message'>  </b></p>
+   <p>Topic: <b id = 'message_topic'>  </b></p>
  	<script>
 	MQTTconnect();
 	</script>
