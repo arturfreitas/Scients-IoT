@@ -1,21 +1,46 @@
+#include <WiFi.h>
+#include <PubSubClient.h>
+
+
 #if CONFIG_FREERTOS_UNICORE
 #define ARDUINO_RUNNING_CORE 0
 #else
 #define ARDUINO_RUNNING_CORE 1
 #endif
 
-#include "heltec.h"
+//#include "heltec.h"
+
 
 // define two tasks for Blink & AnalogRead
 void TaskBlink( void *pvParameters );
 void TaskAnalogReadA3( void *pvParameters );
 
+const char* ssid = "........";
+const char* password = "........";
+const char* mqtt_server = "broker.mqtt-dashboard.com";
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+long lastMsg = 0;
+char msg[50];
+int value = 0;
+
+
+
+
 
 void setup() {
+
+  setup_wifi();
+  client.setServer(mqtt_server, 1883);
+  client.setCallback(callback);
+
+  
+  
  // initialize serial communication at 115200 bits per second:
   Serial.begin(115200);
 
-   Heltec.begin(true /*DisplayEnable Enable*/, false /*LoRa Disable*/, true /*Serial Enable*/);
+   //Heltec.begin(true /*DisplayEnable Enable*/, false /*LoRa Disable*/, true /*Serial Enable*/);
    
  
   
@@ -66,14 +91,14 @@ void TaskBlink(void *pvParameters)  // This is a task.
 
   for (;;) // A Task shall never return or exit.
   {
-      Heltec.display->clear();
+    //  Heltec.display->clear();
     digitalWrite(LED_BUILTIN, HIGH);   // turn the LED on (HIGH is the voltage level)
-      Heltec.display->drawString(64, 15, "ON");
-      Heltec.display->display();
+    //  Heltec.display->drawString(64, 15, "ON");
+    //  Heltec.display->display();
     vTaskDelay(1000);  // one tick delay (100ms) in between reads for stability
-      Heltec.display->clear();
-      Heltec.display->drawString(64, 15, "OFF");
-      Heltec.display->display();
+   //   Heltec.display->clear();
+    //  Heltec.display->drawString(64, 15, "OFF");
+    //  Heltec.display->display();
     digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
     vTaskDelay(1000);  // one tick delay (100ms) in between reads for stability
   }
@@ -92,12 +117,82 @@ void TaskAnalogReadA3(void *pvParameters)  // This is a task.
   This example code is in the public domain.
 */
 
+  char pot_value[4];
+  
   for (;;)
   {
+     if (!client.connected()) {
+    reconnect();
+  }
+  client.loop();
     // read the input on analog pin A26:
-    int sensorValueA3 = analogRead(26);
+    int sensorValueA3 = analogRead(36);
     // print out the value you read:
     Serial.println(sensorValueA3);
     vTaskDelay(10);  // one tick delay (15ms) in between reads for stability
+    
+    sprintf(pot_value,"%d", sensorValueA3);
+    
+    client.publish("Scients_IoT",pot_value);
+
+    
+  }
+}
+
+
+void setup_wifi() {
+
+  
+
+  delay(10);
+  // We start by connecting to a WiFi network
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+
+}
+
+void callback(char* topic, byte* message, unsigned int length) {
+  Serial.print("Message arrived on topic: ");
+  Serial.print(topic);
+  Serial.print(". Message: ");
+  String messageTemp;
+  
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)message[i]);
+    messageTemp += (char)message[i];
+  }
+  Serial.println();
+
+}
+
+void reconnect() {
+  // Loop until we're reconnected
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    // Attempt to connect
+    if (client.connect("ESP8266Client")) {
+      Serial.println("connected");
+      // Subscribe
+      client.subscribe("esp32/output");
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      // Wait 5 seconds before retrying
+      delay(5000);
+    }
   }
 }
