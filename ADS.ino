@@ -4,7 +4,7 @@
 
 void setup() {
   
-  int bit1,bit2; 
+  int bits[12]; 
   
   //put your setup code here, to run once:
   pinMode(ADS_CLOCK,OUTPUT);
@@ -33,7 +33,7 @@ void setup() {
   delay(50);
 
   //Reading first bit
-  bit1 = digitalRead(ADS_DATA);
+  bits[0] = digitalRead(ADS_DATA);
 
   //Setting Reset high
   digitalWrite(ADS_CLOCK,HIGH);
@@ -44,14 +44,123 @@ void setup() {
   delay(50);
   
   //Reading second bit
-  bit2 = digitalRead(ADS_DATA);
-    
-  Serial.print('bit 1: ' );
-  Serial.println(bit1);
+  bits[1] = digitalRead(ADS_DATA);
 
-  Serial.print('bit 2: ');
-  Serial.println(bit2); 
+    //Setting Reset high
+  digitalWrite(ADS_CLOCK,HIGH);
+  delay(500);
+  //Setting Low
+  digitalWrite(ADS_CLOCK,LOW);
   
+  delay(50);
+  
+  //Reading second bit
+  bits[2] = digitalRead(ADS_DATA);
+
+    //Setting Reset high
+  digitalWrite(ADS_CLOCK,HIGH);
+  delay(500);
+  //Setting Low
+  digitalWrite(ADS_CLOCK,LOW);
+  
+  delay(50);
+  
+  //Reading second bit
+  bits[3] = digitalRead(ADS_DATA);
+
+    //Setting Reset high
+  digitalWrite(ADS_CLOCK,HIGH);
+  delay(500);
+  //Setting Low
+  digitalWrite(ADS_CLOCK,LOW);
+  
+  delay(50);
+  
+  //Reading second bit
+  bits[4] = digitalRead(ADS_DATA);
+
+    //Setting Reset high
+  digitalWrite(ADS_CLOCK,HIGH);
+  delay(500);
+  //Setting Low
+  digitalWrite(ADS_CLOCK,LOW);
+  
+  delay(50);
+  
+  //Reading second bit
+  bits[5] = digitalRead(ADS_DATA);
+
+    //Setting Reset high
+  digitalWrite(ADS_CLOCK,HIGH);
+  delay(500);
+  //Setting Low
+  digitalWrite(ADS_CLOCK,LOW);
+  
+  delay(50);
+  
+  //Reading second bit
+  bits[6] = digitalRead(ADS_DATA);
+
+    //Setting Reset high
+  digitalWrite(ADS_CLOCK,HIGH);
+  delay(500);
+  //Setting Low
+  digitalWrite(ADS_CLOCK,LOW);
+  
+  delay(50);
+  
+  //Reading second bit
+  bits[7] = digitalRead(ADS_DATA);
+
+    //Setting Reset high
+  digitalWrite(ADS_CLOCK,HIGH);
+  delay(500);
+  //Setting Low
+  digitalWrite(ADS_CLOCK,LOW);
+  
+  delay(50);
+  
+  //Reading second bit
+  bits[8] = digitalRead(ADS_DATA);
+
+    //Setting Reset high
+  digitalWrite(ADS_CLOCK,HIGH);
+  delay(500);
+  //Setting Low
+  digitalWrite(ADS_CLOCK,LOW);
+  
+  delay(50);
+  
+  //Reading second bit
+  bits[9] = digitalRead(ADS_DATA);
+
+    //Setting Reset high
+  digitalWrite(ADS_CLOCK,HIGH);
+  delay(500);
+  //Setting Low
+  digitalWrite(ADS_CLOCK,LOW);
+  
+  delay(50);
+  
+  //Reading second bit
+  bits[10] = digitalRead(ADS_DATA);
+
+    //Setting Reset high
+  digitalWrite(ADS_CLOCK,HIGH);
+  delay(500);
+  //Setting Low
+  digitalWrite(ADS_CLOCK,LOW);
+  
+  delay(50);
+  
+  //Reading second bit
+  bits[11] = digitalRead(ADS_DATA);
+  
+    
+  for(int i = 0; i < 12; i++){
+    Serial.print('bit %d:', i+1 );
+    Serial.println(bits[i]);
+  }
 
 }
 
