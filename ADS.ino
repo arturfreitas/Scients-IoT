@@ -4,6 +4,8 @@
 
 void setup() {
   
+  Serial.begin(9600);
+  
   int bits[12]; 
   
   //put your setup code here, to run once:
